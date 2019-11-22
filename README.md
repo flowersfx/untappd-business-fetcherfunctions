@@ -4,11 +4,15 @@ An Azure timer function in C# to retrieve the tap menu for a specific venue on U
 
 Deploy to Azure Functions and make sure the following application settings are present:
 
-```UNTAPPD_VENUE_ACCESS_TOKEN```
+```UNTAPPD_READ_ACCESS_TOKEN```
 
 A read access token for the venue on Untappd Business.
 
-```UNTAPPD_VENUE_ID```
+```UNTAPPD_USERNAME```
+
+The numerical page id of the page to pull events from, can be found by visiting the page and looking at the bottom of the About section.
+
+```UNTAPPD_MENU_ID```
 
 The numerical page id of the page to pull events from, can be found by visiting the page and looking at the bottom of the About section.
 
@@ -26,7 +30,4 @@ The filename to store json results in, eg "menu.json"
 
 For local testing, add these application settings to a local.settings.json file in the project root.
 
-menu_id: 2c7b3715-1353-4791-a252-c187d78c9baf (ölverkstan)
-location_id: "13967" (tritonia)
-untappd_user_id: "3571316" (weyrand)
-untappd_venue_id: "2847695" (tritonia)
+menu_id: 44623

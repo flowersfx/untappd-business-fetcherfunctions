@@ -14,13 +14,13 @@ using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Mandagsklubben.Events
+namespace FlowersFX.UntappdMenu
 {
-    public static class events
+    public static class UntappdMenu
     {
         static IConfigurationRoot config;
 
-        [FunctionName("events")]
+        [FunctionName("UntappdMenu")]
         public static async void Run(
             [TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
@@ -34,15 +34,17 @@ namespace Mandagsklubben.Events
             var account = CloudStorageAccount.Parse(storageConnectionString);
 
             CloudBlobClient cloudBlobClient = account.CreateCloudBlobClient();
-            var events = await GetFacebookEvents(config);
-            await UploadBlobString(cloudBlobClient,events);
+            var untappdMenu = await GetUntappdMenu(config);
+            await UploadBlobString(cloudBlobClient,untappdMenu);
         }
 
-        public static async Task<Events> GetFacebookEvents(IConfigurationRoot config )
+        public static async Task<Events> GetUntappdMenu(IConfigurationRoot config )
         {
-            var pageid = config["FACEBOOK_PAGE_ID"];
-			var token = config["FACEBOOK_PAGE_ACCESS_TOKEN"];
-			var url = $"https://graph.facebook.com/{pageid}/events?time_filter=upcoming&fields=cover,name,description,place,start_time,end_time,is_draft&access_token={token}";
+            var pageid = config["UNTAPPD_USERNAME"];
+			var token = config["UNTAPPD_VENUE_ACCESS_TOKEN"];
+			var menuId = config["UNTAPPD_MENU_ID"];
+			var url = $"https://business.untappd.com/api/v1/menus/{menuId}?full=true";
+            
             var jsonreader = new JsonTextReader(new StringReader(await Get(url)));
             jsonreader.DateParseHandling = DateParseHandling.None;
             JArray fbevents = (JArray)JObject.Load(jsonreader)["data"];
