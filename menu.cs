@@ -46,12 +46,11 @@ namespace FlowersFX
             return await Get(url);
         }
 
-        public static async Task UploadBlobString(CloudBlobClient storageClient, Events events)
+        public static async Task UploadBlobString(CloudBlobClient storageClient, string menu)
         {
             var cloudBlobContainer = storageClient.GetContainerReference(config["BLOB_STORAGE_CONTAINER_NAME"]);
             CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(config["BLOB_STORAGE_FILE_NAME"]);
-            var jsonstr = JsonConvert.SerializeObject(events);
-            await cloudBlockBlob.UploadTextAsync(jsonstr);
+            await cloudBlockBlob.UploadTextAsync(menu);
         }
 
         public static async Task<string> Get(string url)
