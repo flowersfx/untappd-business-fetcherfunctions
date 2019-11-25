@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace FlowersFX.UntappdMenu
+namespace FlowersFX
 {
     public static class UntappdMenu
     {
@@ -38,7 +38,7 @@ namespace FlowersFX.UntappdMenu
             await UploadBlobString(cloudBlobClient,untappdMenu);
         }
 
-        public static async Task<Menu> GetUntappdMenu(IConfigurationRoot config )
+        public static async Task<string> GetUntappdMenu(IConfigurationRoot config )
         {
 			var untappdMenuId = config["UNTAPPD_MENU_ID"];
 			var url = $"https://business.untappd.com/api/v1/menus/{untappdMenuId}?full=true";
@@ -68,24 +68,5 @@ namespace FlowersFX.UntappdMenu
                 return reader.ReadToEnd();
             }
         }
-    }
-
-    public class Events
-    {
-        public Event[] events { get; set; }
-        public string date { get; set; }
-    }
-
-    public class Event
-    {
-        public string id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-        public string coverurl { get; set; }
-        public string placename { get; set; }
-        public string placestreet { get; set; }
-        public string starttime { get; set; }
-        public string endtime { get; set; }
-        public string isdraft {get; set; }
     }
 }
