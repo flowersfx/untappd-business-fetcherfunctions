@@ -38,58 +38,12 @@ namespace FlowersFX.UntappdMenu
             await UploadBlobString(cloudBlobClient,untappdMenu);
         }
 
-        public static async Task<Events> GetUntappdMenu(IConfigurationRoot config )
+        public static async Task<Menu> GetUntappdMenu(IConfigurationRoot config )
         {
-            var pageid = config["UNTAPPD_USERNAME"];
-			var token = config["UNTAPPD_VENUE_ACCESS_TOKEN"];
-			var menuId = config["UNTAPPD_MENU_ID"];
-			var url = $"https://business.untappd.com/api/v1/menus/{menuId}?full=true";
+			var untappdMenuId = config["UNTAPPD_MENU_ID"];
+			var url = $"https://business.untappd.com/api/v1/menus/{untappdMenuId}?full=true";
             
-            var jsonreader = new JsonTextReader(new StringReader(await Get(url)));
-            jsonreader.DateParseHandling = DateParseHandling.None;
-            JArray fbevents = (JArray)JObject.Load(jsonreader)["data"];
-            var events = new List<Event>();
-
-            foreach(var fbevent in fbevents) {
-                var revent = new Event();
-                revent.id = (fbevent["id"] ?? string.Empty).ToString();
-                revent.isdraft = (fbevent["is_draft"] ?? string.Empty).ToString();
-                revent.name = (fbevent["name"] ?? string.Empty).ToString();
-                revent.description = (fbevent["description"] ?? string.Empty).ToString();
-                
-                var fbplace = fbevent["place"]; // inlining is for machines
-                if (fbplace != null)
-                {
-                    revent.placename = (fbplace["name"] ?? string.Empty).ToString();
-                    var fblocation = fbplace["location"];
-                    if (fblocation != null)
-                    {
-                        revent.placestreet = (fblocation["street"] ?? string.Empty).ToString();
-                    }
-                } else {
-                    revent.placename = string.Empty;
-                    revent.placestreet = string.Empty;
-                }
-
-                revent.starttime = (fbevent["start_time"] ?? string.Empty).ToString();
-                revent.endtime = (fbevent["end_time"] ?? string.Empty).ToString();
-                var fbcover = fbevent["cover"];
-
-                if (fbcover != null)
-                {
-                    revent.coverurl = (fbcover["source"] ?? string.Empty).ToString();
-                } 
-                else
-                {
-                    revent.coverurl = string.Empty;
-                }
-
-                events.Add(revent);
-            }
-            return new Events {
-                events = events.OrderBy(t => t.starttime ).ToArray(),
-                date = DateTime.UtcNow.ToString("s")
-            };
+            return await Get(url);
         }
 
         public static async Task UploadBlobString(CloudBlobClient storageClient, Events events)
@@ -102,7 +56,12 @@ namespace FlowersFX.UntappdMenu
 
         public static async Task<string> Get(string url)
         {
+			var untappdUsername = config["UNTAPPED_USERNAME"];
+			var untappedReadAccessToken = config["UNTAPPD_BASE64_AUTHENTICATION_STRING"];
+
             var request = System.Net.WebRequest.Create(url);
+            request.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{untappdUsername}:{untappedReadAccessToken}")));
+
             using( var response = await request.GetResponseAsync() )
             using( var reader = new StreamReader( response.GetResponseStream() ) )
             {
