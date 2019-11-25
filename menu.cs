@@ -57,7 +57,7 @@ namespace FlowersFX.UntappdMenu
         public static async Task<string> Get(string url)
         {
 			var untappdUsername = config["UNTAPPED_USERNAME"];
-			var untappedReadAccessToken = config["UNTAPPD_BASE64_AUTHENTICATION_STRING"];
+			var untappedReadAccessToken = config["UNTAPPD_READ_ACCESS_TOKEN"];
 
             var request = System.Net.WebRequest.Create(url);
             request.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{untappdUsername}:{untappedReadAccessToken}")));
