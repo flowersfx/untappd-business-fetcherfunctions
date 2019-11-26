@@ -6,15 +6,15 @@ Deploy to Azure Functions and make sure the following application settings are p
 
 ```UNTAPPD_READ_ACCESS_TOKEN```
 
-A read access token for the venue on Untappd Business.
+A read access token for the venue user on Untappd Business.
 
 ```UNTAPPD_USERNAME```
 
-The numerical page id of the page to pull events from, can be found by visiting the page and looking at the bottom of the About section.
+The username (email) of the venue user on Untappd Business. This is required because Untappd uses Basic authentication request headers to access their API.
 
 ```UNTAPPD_MENU_ID```
 
-The numerical page id of the page to pull events from, can be found by visiting the page and looking at the bottom of the About section.
+The numerical id of the menu to fetch. This can be explored by calling the menus endpoint for a venue and get a list of them.
 
 ```BLOB_STORAGE_CONNECTION_STRING```
 
@@ -29,5 +29,3 @@ The container name for a blob container in the Azure storage.
 The filename to store json results in, eg "menu.json"
 
 For local testing, add these application settings to a local.settings.json file in the project root.
-
-menu_id: 44623
