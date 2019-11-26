@@ -23,7 +23,7 @@ namespace FlowersFX
 
         [FunctionName("UntappdMenu")]
         public static async void Run(
-            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+            [TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             config = new ConfigurationBuilder()
                 .SetBasePath(context.FunctionAppDirectory)
@@ -56,7 +56,7 @@ namespace FlowersFX
 
         public static async Task<string> Get(string url)
         {
-			var untappdUsername = config["UNTAPPED_USERNAME"];
+			var untappdUsername = config["UNTAPPD_USERNAME"];
 			var untappedReadAccessToken = config["UNTAPPD_READ_ACCESS_TOKEN"];
 
             var request = System.Net.WebRequest.Create(url);
