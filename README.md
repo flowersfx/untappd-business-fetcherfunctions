@@ -26,6 +26,6 @@ The container name for a blob container in the Azure storage.
 
 ```BLOB_STORAGE_FILE_NAME```
 
-The filename to store json results in, eg "menu.json"
+The filename to store json results in, eg "venue-tap-menu.json"
 
 For local testing, add these application settings to a local.settings.json file in the project root.

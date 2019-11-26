@@ -23,7 +23,7 @@ namespace FlowersFX
 
         [FunctionName("UntappdMenu")]
         public static async void Run(
-            [TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
+            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             config = new ConfigurationBuilder()
                 .SetBasePath(context.FunctionAppDirectory)
