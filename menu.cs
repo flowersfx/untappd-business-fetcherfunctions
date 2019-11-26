@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using System.Net.Http.Headers;
 
 namespace FlowersFX
 {
@@ -59,7 +60,7 @@ namespace FlowersFX
 			var untappedReadAccessToken = config["UNTAPPD_READ_ACCESS_TOKEN"];
 
             var request = System.Net.WebRequest.Create(url);
-            request.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{untappdUsername}:{untappedReadAccessToken}")));
+            request.Headers.Add(System.Net.HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{untappdUsername}:{untappedReadAccessToken}")));
 
             using( var response = await request.GetResponseAsync() )
             using( var reader = new StreamReader( response.GetResponseStream() ) )
