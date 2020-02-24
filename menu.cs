@@ -40,14 +40,14 @@ namespace FlowersFX
             await UploadBlobString(cloudBlobClient, JsonConvert.SerializeObject(untappdMenu));
         }
 
-        public static async Task<Menu> GetUntappdMenu(IConfigurationRoot config)
+        public static async Task<Root> GetUntappdMenu(IConfigurationRoot config)
         {
             var untappdMenuId = config["UNTAPPD_MENU_ID"];
             var url = $"https://business.untappd.com/api/v1/menus/{untappdMenuId}?full=true";
 
             var json = await Get(url);
             dynamic parsed = JsonConvert.DeserializeObject(json);
-
+           
             var menu = new Menu
             {
                 id = parsed.menu.id,
@@ -119,7 +119,7 @@ namespace FlowersFX
                 menu.sections.Add(section);
             }
 
-            return menu;
+            return new Root { menu = menu };
         }
 
         public static async Task UploadBlobString(CloudBlobClient storageClient, string menu)
@@ -143,6 +143,11 @@ namespace FlowersFX
                 return reader.ReadToEnd();
             }
         }
+    }
+
+    public class Root
+    {
+        public Menu menu { get; set; }
     }
 
     public class Menu
