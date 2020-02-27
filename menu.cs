@@ -24,7 +24,7 @@ namespace FlowersFX
 
         [FunctionName("UntappdMenu")]
         public static async void Run(
-            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
+            [TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             config = new ConfigurationBuilder()
                 .SetBasePath(context.FunctionAppDirectory)
@@ -44,7 +44,6 @@ namespace FlowersFX
         {
             var untappdMenuId = config["UNTAPPD_MENU_ID"];
             var url = $"https://business.untappd.com/api/v1/menus/{untappdMenuId}?full=true";
-
             var json = await Get(url);
             dynamic parsed = JsonConvert.DeserializeObject(json);
            
@@ -109,6 +108,53 @@ namespace FlowersFX
                         {
                             container.size_centiliters = (int)Math.Ceiling(size_in_ounces_as_double * 2.95735); // Convert to centiliters
                         }
+
+                        item.containers.Add(container);
+                    }
+
+                    section.items.Add(item);
+                }
+
+                menu.sections.Add(section);
+            }
+
+            var untappdSecondaryMenuId = config["UNTAPPD_MENU_ID_SECONDARY"];
+            var urlSecondary = $"https://business.untappd.com/api/v1/custom_menus/{untappdSecondaryMenuId}?full=true";
+            var jsonSecondary = await Get(urlSecondary);
+            dynamic parsedSecondary = JsonConvert.DeserializeObject(jsonSecondary);
+
+            foreach (dynamic parsedsection in parsedSecondary.custom_menu.custom_sections)
+            {
+                var section = new Section
+                {
+                    id = parsedsection.id,
+                    name = parsedsection.name,
+                    description = parsedsection.description,
+                    position = parsedsection.position,
+                    items = new List<Item>()
+                };
+
+                foreach (dynamic parseditem in parsedsection.custom_items)
+                {
+                    var item = new Item
+                    {
+                        id = parseditem.id,
+                        name = parseditem.name,
+                        style = parseditem.type,
+                        description = parseditem.description,
+                        modified = parseditem.updated_at,
+                        containers = new List<Container>()
+                    };
+
+                    foreach (dynamic parsedcontainer in parseditem.custom_containers)
+                    {
+                        var container = new Container
+                        {
+                            id = parsedcontainer.id,
+                            price_sek = parsedcontainer.price,
+                            position = parsedcontainer.position,
+                            name = parsedcontainer.name
+                        };
 
                         item.containers.Add(container);
                     }
