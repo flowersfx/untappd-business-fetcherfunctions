@@ -87,6 +87,7 @@ namespace FlowersFX
                         breweryid = parseditem.untappd_brewery_id,
                         abv = parseditem.abv,
                         style = parseditem.style,
+                        type = "beer",
                         modified = parseditem.updated_at,
                         containers = new List<Container>()
                     };
@@ -140,8 +141,8 @@ namespace FlowersFX
                     {
                         id = parseditem.id,
                         name = parseditem.name,
-                        style = parseditem.type,
-                        description = parseditem.description,
+                        type = parseditem.type,
+                        breweryname = parseditem.description,
                         modified = parseditem.updated_at,
                         containers = new List<Container>()
                     };
@@ -225,6 +226,7 @@ namespace FlowersFX
         public int breweryid { get; set; }
         public string abv { get; set; }
         public string style { get; set; }
+        public string type { get; set; }
         public DateTime modified { get; set; }
         public string rating { get; set; }
         public List<Container> containers { get; set; }
