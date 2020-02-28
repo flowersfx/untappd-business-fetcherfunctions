@@ -1,30 +1,25 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using System.Net.Http.Headers;
 using System.Globalization;
+using FlowersFX.Models;
 
 namespace FlowersFX
 {
-    public static class UntappdMenu
+    public static class GetTapMenu
     {
         static IConfigurationRoot config;
+        static Utilities utilities;
 
-        [FunctionName("UntappdMenu")]
+        [FunctionName("GetTapMenu")]
         public static async void Run(
-            [TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
+            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             config = new ConfigurationBuilder()
                 .SetBasePath(context.FunctionAppDirectory)
@@ -32,19 +27,22 @@ namespace FlowersFX
                 .AddEnvironmentVariables()
                 .Build();
 
+            utilities = new Utilities(context);
+
             string storageConnectionString = config["BLOB_STORAGE_CONNECTION_STRING"];
             var account = CloudStorageAccount.Parse(storageConnectionString);
 
             CloudBlobClient cloudBlobClient = account.CreateCloudBlobClient();
             var untappdMenu = await GetUntappdMenu(config);
-            await UploadBlobString(cloudBlobClient, JsonConvert.SerializeObject(untappdMenu));
+            var filename = config["BLOB_STORAGE_FILE_NAME_PREFIX"] + "-tap-menu.json";
+            await utilities.UploadBlobString(cloudBlobClient, JsonConvert.SerializeObject(untappdMenu), filename);
         }
 
-        public static async Task<Root> GetUntappdMenu(IConfigurationRoot config)
+        public static async Task<MenuRoot> GetUntappdMenu(IConfigurationRoot config)
         {
-            var untappdMenuId = config["UNTAPPD_MENU_ID"];
+            var untappdMenuId = config["UNTAPPD_TAP_MENU_ID"];
             var url = $"https://business.untappd.com/api/v1/menus/{untappdMenuId}?full=true";
-            var json = await Get(url);
+            var json = await utilities.Get(url);
             dynamic parsed = JsonConvert.DeserializeObject(json);
            
             var menu = new Menu
@@ -119,9 +117,9 @@ namespace FlowersFX
                 menu.sections.Add(section);
             }
 
-            var untappdSecondaryMenuId = config["UNTAPPD_MENU_ID_SECONDARY"];
+            var untappdSecondaryMenuId = config["UNTAPPD_WINE_MENU_ID"];
             var urlSecondary = $"https://business.untappd.com/api/v1/custom_menus/{untappdSecondaryMenuId}?full=true";
-            var jsonSecondary = await Get(urlSecondary);
+            var jsonSecondary = await utilities.Get(urlSecondary);
             dynamic parsedSecondary = JsonConvert.DeserializeObject(jsonSecondary);
 
             foreach (dynamic parsedsection in parsedSecondary.custom_menu.custom_sections)
@@ -166,77 +164,7 @@ namespace FlowersFX
                 menu.sections.Add(section);
             }
 
-            return new Root { menu = menu };
+            return new MenuRoot { menu = menu };
         }
-
-        public static async Task UploadBlobString(CloudBlobClient storageClient, string menu)
-        {
-            var cloudBlobContainer = storageClient.GetContainerReference(config["BLOB_STORAGE_CONTAINER_NAME"]);
-            CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(config["BLOB_STORAGE_FILE_NAME"]);
-            await cloudBlockBlob.UploadTextAsync(menu);
-        }
-
-        public static async Task<string> Get(string url)
-        {
-            var untappdUsername = config["UNTAPPD_USERNAME"];
-            var untappedReadAccessToken = config["UNTAPPD_READ_ACCESS_TOKEN"];
-
-            var request = System.Net.WebRequest.Create(url);
-            request.Headers.Add(System.Net.HttpRequestHeader.Authorization, "Basic " + Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes($"{untappdUsername}:{untappedReadAccessToken}")));
-
-            using (var response = await request.GetResponseAsync())
-            using (var reader = new StreamReader(response.GetResponseStream()))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-    }
-
-    public class Root
-    {
-        public Menu menu { get; set; }
-    }
-
-    public class Menu
-    {
-        public string id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-        public DateTime updated { get; set; }
-        public DateTime downloaded { get; set; }
-        public List<Section> sections { get; set; }
-    }
-
-    public class Section
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public int position { get; set; }
-        public string description { get; set; }
-        public List<Item> items {get; set; }
-    }
-
-    public class Item
-    {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string description { get; set; }
-        public string number { get; set; }
-        public string breweryname { get; set; }
-        public int breweryid { get; set; }
-        public string abv { get; set; }
-        public string style { get; set; }
-        public string type { get; set; }
-        public DateTime modified { get; set; }
-        public string rating { get; set; }
-        public List<Container> containers { get; set; }
-    }
-
-    public class Container {
-        public int id { get; set; }
-        public string name { get; set; }
-        public int position { get; set; }
-        public int size_centiliters { get; set; }
-        public string price_sek { get; set; }
     }
 }
