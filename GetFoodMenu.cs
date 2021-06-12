@@ -18,7 +18,7 @@ namespace FlowersFX
         static Utilities utilities;
 
         [FunctionName("GetFoodMenu")]
-        public static async void Run(
+        public static async Task Run(
             [TimerTrigger("0 45 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             config = new ConfigurationBuilder()
