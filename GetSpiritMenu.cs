@@ -12,7 +12,7 @@ using FlowersFX.Models;
 
 namespace FlowersFX
 {
-    public static class GetFoodMenu
+    public static class GetSpiritMenu
     {
         static IConfigurationRoot config;
         static Utilities utilities;
