@@ -123,6 +123,12 @@ namespace FlowersFX
             }
 
             var untappdSecondaryMenuId = config["UNTAPPD_WINE_MENU_ID"];
+
+            if (untappdSecondaryMenuId == null)
+            {
+                return new MenuRoot { menu = menu };
+            }
+
             var urlSecondary = $"https://business.untappd.com/api/v1/custom_menus/{untappdSecondaryMenuId}?full=true";
             var jsonSecondary = await utilities.Get(urlSecondary);
             dynamic parsedSecondary = JsonConvert.DeserializeObject(jsonSecondary);
