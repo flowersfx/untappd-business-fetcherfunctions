@@ -19,7 +19,7 @@ namespace FlowersFX
 
         [FunctionName("GetTapMenu")]
         public static async Task Run(
-            [TimerTrigger("0/5 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
+            [TimerTrigger("0 */5 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
             config = new ConfigurationBuilder()
                 .SetBasePath(context.FunctionAppDirectory)
