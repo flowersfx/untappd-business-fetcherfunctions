@@ -27,6 +27,11 @@ namespace FlowersFX
                 .AddEnvironmentVariables()
                 .Build();
 
+            if (config["UNTAPPD_FOOD_MENU_SWEDISH_ID"] == null)
+            {
+                return;
+            }
+
             utilities = new Utilities(context);
 
             string storageConnectionString = config["BLOB_STORAGE_CONNECTION_STRING"];

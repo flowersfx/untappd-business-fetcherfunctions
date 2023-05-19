@@ -26,6 +26,11 @@ namespace FlowersFX
                 .AddEnvironmentVariables()
                 .Build();
 
+            if (config["UNTAPPD_LOCATION_ID"] == null)
+            {
+                return;
+            }
+
             utilities = new Utilities(context);
 
             string storageConnectionString = config["BLOB_STORAGE_CONNECTION_STRING"];

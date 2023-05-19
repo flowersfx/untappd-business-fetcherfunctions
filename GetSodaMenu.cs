@@ -17,7 +17,7 @@ namespace FlowersFX
         static IConfigurationRoot config;
         static Utilities utilities;
 
-        [FunctionName("GetSodakMenu")]
+        [FunctionName("GetSodaMenu")]
         public static async Task Run(
             [TimerTrigger("0 45 * * * *", RunOnStartup = true)]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
@@ -26,6 +26,11 @@ namespace FlowersFX
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();
+
+            if (config["UNTAPPD_SODA_MENU_ID"] == null)
+            {
+                return;
+            }
 
             utilities = new Utilities(context);
 
