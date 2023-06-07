@@ -46,7 +46,7 @@ namespace FlowersFX
         public static async Task<MenuRoot> GetUntappdCustomMenu(IConfigurationRoot config)
         {
             var untappedSodaMenuId = config["UNTAPPD_SODA_MENU_ID"];
-            var url = $"https://business.untappd.com/api/v1/custom_menus/{untappedSodaMenuId}?full=true";
+            var url = $"https://business.untappd.com/api/v1/menus/{untappedSodaMenuId}?full=true&include_legacy=true";
             var json = await utilities.Get(url);
             dynamic parsed = JsonConvert.DeserializeObject(json);
 
