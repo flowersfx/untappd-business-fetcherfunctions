@@ -133,7 +133,7 @@ namespace FlowersFX
             var jsonSecondary = await utilities.Get(urlSecondary);
             dynamic parsedSecondary = JsonConvert.DeserializeObject(jsonSecondary);
 
-            foreach (dynamic parsedsection in parsedSecondary.custom_menu.custom_sections)
+            foreach (dynamic parsedsection in parsedSecondary.menu.sections)
             {
                 var section = new Section
                 {
@@ -144,7 +144,7 @@ namespace FlowersFX
                     items = new List<Item>()
                 };
 
-                foreach (dynamic parseditem in parsedsection.custom_items)
+                foreach (dynamic parseditem in parsedsection.items)
                 {
                     var item = new Item
                     {
@@ -156,7 +156,7 @@ namespace FlowersFX
                         containers = new List<Container>()
                     };
 
-                    foreach (dynamic parsedcontainer in parseditem.custom_containers)
+                    foreach (dynamic parsedcontainer in parseditem.containers)
                     {
                         var container = new Container
                         {
