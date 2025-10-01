@@ -149,6 +149,7 @@ namespace FlowersFX
                     var item = new Item
                     {
                         id = parseditem.id,
+                        number = parseditem.tap_number,
                         name = parseditem.name,
                         type = parseditem.type,
                         breweryname = parseditem.description,
