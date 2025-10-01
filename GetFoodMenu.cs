@@ -38,12 +38,12 @@ namespace FlowersFX
             var account = CloudStorageAccount.Parse(storageConnectionString);
 
             CloudBlobClient cloudBlobClient = account.CreateCloudBlobClient();
-            var untappdMenu = await GetUntappdCustomMenu(config);
+            var untappdMenu = await GetUntappdMenu(config);
             var filename = config["BLOB_STORAGE_FILE_NAME_PREFIX"] + "-food-menu.json";
             await utilities.UploadBlobString(cloudBlobClient, JsonConvert.SerializeObject(untappdMenu), filename);
         }
 
-        public static async Task<MenuRoot> GetUntappdCustomMenu(IConfigurationRoot config)
+        public static async Task<MenuRoot> GetUntappdMenu(IConfigurationRoot config)
         {
             var untappdFoodMenuId = config["UNTAPPD_FOOD_MENU_ID"];
             var url = $"https://business.untappd.com/api/v1/menus/{untappdFoodMenuId}?full=true";
@@ -52,15 +52,15 @@ namespace FlowersFX
 
             var menu = new Menu
             {
-                id = parsed.custom_menu.id,
-                name = parsed.custom_menu.name,
-                description = parsed.custom_menu.description,
-                updated = parsed.custom_menu.updated_at,
+                id = parsed.menu.id,
+                name = parsed.menu.name,
+                description = parsed.menu.description,
+                updated = parsed.menu.updated_at,
                 downloaded = DateTime.UtcNow,
                 sections = new List<Section>()
             };
 
-            foreach (dynamic parsedsection in parsed.custom_menu.custom_sections)
+            foreach (dynamic parsedsection in parsed.menu.sections)
             {
                 var section = new Section
                 {
@@ -71,7 +71,7 @@ namespace FlowersFX
                     items = new List<Item>()
                 };
 
-                foreach (dynamic parseditem in parsedsection.custom_items)
+                foreach (dynamic parseditem in parsedsection.items)
                 {
                     var item = new Item
                     {
@@ -83,7 +83,7 @@ namespace FlowersFX
                         containers = new List<Container>()
                     };
 
-                    foreach (dynamic parsedcontainer in parseditem.custom_containers)
+                    foreach (dynamic parsedcontainer in parseditem.containers)
                     {
                         var container = new Container
                         {
